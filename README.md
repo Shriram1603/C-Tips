@@ -95,7 +95,7 @@ Console.WriteLine(myArray[0]);
 void ModifyArrayRef(ref int[] arr)
 {
     arr[0] = 99;          // ✅ Modifies original array
-    arr = new int[] { 1, 2, 3 };  // ❌ Only modifies local reference
+    arr = new int[] { 1, 2, 3 };  // ✅ modifies original array
 }
 
 int[] myArrayRef = { 0, 0, 0 };
