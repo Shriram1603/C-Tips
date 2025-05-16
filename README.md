@@ -69,3 +69,38 @@ int x = (int)list[0]; // unboxing
 - Value types (like int) are not objects—they must be boxed to be stored.
 
 - When retrieving the value, it must be unboxed back to the original type.
+
+# 5. Passing objects as parameters
+
+- When an array is passed to a method in C#, the method receives a copy of the reference to the array — not the actual array and not the actual variable holding the reference. This means:
+
+- You can modify the contents of the array inside the method, and those changes will affect the original array.
+
+- But if you try to assign a new array to the parameter, this will only update the local copy of the reference — the original reference remains unchanged.
+
+- To reassign a new array and reflect that outside the method, use the ref keyword.
+
+```csharp
+
+void ModifyArray(int[] arr)
+{
+    arr[0] = 99;          // ✅ Modifies original array
+    arr = new int[] { 1, 2, 3 };  // ❌ Only modifies local reference
+}
+
+int[] myArray = { 0, 0, 0 };
+ModifyArray(myArray);
+Console.WriteLine(myArray[0]); 
+
+void ModifyArrayRef(ref int[] arr)
+{
+    arr[0] = 99;          // ✅ Modifies original array
+    arr = new int[] { 1, 2, 3 };  // ❌ Only modifies local reference
+}
+
+int[] myArrayRef = { 0, 0, 0 };
+ModifyArrayRef(ref myArrayRef);
+Console.WriteLine(myArrayRef[0]); 
+```
+
+
