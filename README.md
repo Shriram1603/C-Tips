@@ -172,3 +172,50 @@ System.DivideByZeroException: Attempted to divide by zero.
 | `throw ex;` | ❌ No (stack trace reset)   | Avoid unless modifying the exception |
 
 ### Rule of Thumb : Always use throw; when you're not changing the exception.
+
+# Indexing and ElementAt()
+
+- 🟡 `List<T>` doesn’t need `ElementAt()` — you can access by index:
+
+```csharp
+List<int> nums = new List<int> { 10, 20, 30 };
+int value = nums[1]; // ✅ 20
+```
+- but `ElementAt()` is needed for `IEnumerable<T>` that does not support indexing (like HashSet<T>, Queue<T>, IQueryable<T>, etc.).
+
+### 🧠 Why `ElementAt()` Exists
+
+`ElementAt()` is an extension method from LINQ.
+
+```csharp
+int value = myEnumerable.ElementAt(2);
+```
+
+It works on any IEnumerable<T>, even if the underlying collection doesn't support indexers (like [i]).
+
+### When to use Which
+
+| Scenario                                                            | Use `[i]` or `ElementAt(i)`? | Why?                             |
+| ------------------------------------------------------------------- | ---------------------------- | -------------------------------- |
+| You have a `List<T>` or array                                       | Use `[i]`                    | Faster (direct access via index) |
+| You have an `IEnumerable<T>` like `HashSet`, `Queue`, or LINQ query | Use `ElementAt(i)`           | Because `[i]` is not supported   |
+| You’re chaining LINQ queries                                        | `ElementAt(i)`               | More readable in query chains    |
+
+# Slicing in C#
+
+C# does not support true slicing like Python (e.g., list[1:3]). But in C# 8.0+, you can do:
+
+```csharp
+var subList = list[1..3]; // Requires List<T> and .NET Core 3+ / .NET 5+
+
+int[] myArray1 = {1,2,3}
+int[] myArray2 = myArray1[0..3];
+Console.WriteLine(myArrayRef2[0]); // 1
+Console.WriteLine(myArrayRef2[1]); // 2
+Console.WriteLine(myArrayRef[2]);  // 3
+
+string s4 = "Hello World!";
+string s5 = s4[0..5];
+Console.WriteLine(s5); // Hello
+```
+
