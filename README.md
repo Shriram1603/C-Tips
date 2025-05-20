@@ -103,4 +103,72 @@ ModifyArrayRef(ref myArrayRef);
 Console.WriteLine(myArrayRef[0]); 
 ```
 
+# 6. Throw vs Throw ex
 
+In C#, when handling errors, you can re-throw an exception using either:
+
+1. throw;
+
+2. throw ex;
+
+They both throw the same exception — but there's a big difference:
+
+### 🔹 Case 1: Using `throw;`
+
+```csharp
+try
+{
+    int x = 0;
+    int result = 10 / x; // ❌ DivideByZeroException
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Caught in catch block");
+    throw; // 🔁 Re-throws the same exception
+}
+```
+- ✅ Keeps the original error location.
+
+- The stack trace will show the error happened at 10 / x.
+
+### 🔸 Case 2: Using throw ex;
+
+```csharp
+try
+{
+    int x = 0;
+    int result = 10 / x;
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Caught in catch block");
+    throw ex; // ⚠️ Re-throws, but resets the error location to THIS LINE
+}
+
+```
+
+- ❌ The stack trace will now say the error happened at throw ex, not 10 / x.
+
+### 📸 Imagine a Stack Trace
+
+✅ With throw;
+
+```sql
+System.DivideByZeroException: Attempted to divide by zero.
+   at MyProgram.Main() in Program.cs: line 5  ← shows actual line of error
+
+```
+
+❌ With throw ex;:
+```pgsql
+System.DivideByZeroException: Attempted to divide by zero.
+   at MyProgram.Main() in Program.cs: line 10 ← shows throw ex line, original lost
+
+```
+
+| Use         | Keeps Original Error Info? | When to Use                          |
+| ----------- | -------------------------- | ------------------------------------ |
+| `throw;`    | ✅ Yes                      | Re-throw inside `catch`              |
+| `throw ex;` | ❌ No (stack trace reset)   | Avoid unless modifying the exception |
+
+### Rule of Thumb : Always use throw; when you're not changing the exception.
