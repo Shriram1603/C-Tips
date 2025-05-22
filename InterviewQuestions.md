@@ -463,3 +463,142 @@ public static void Main()
 **✅ Answer:**  
 - `readonly struct` prevents mutation and ensures immutability, especially important for performance and predictable behavior.
 - `ref struct` can **only live on the stack** and cannot be boxed or captured by lambdas. This ensures **safety and performance** for stack-only scenarios like `Span<T>`.
+
+
+
+## Q26: Multicast Delegate Return Value
+
+```csharp
+public delegate int MyDelegate();
+public static int A() { Console.WriteLine("A"); return 1; }
+public static int B() { Console.WriteLine("B"); return 2; }
+
+public static void Main()
+{
+    MyDelegate d = A;
+    d += B;
+    int result = d();
+    Console.WriteLine($"Result: {result}");
+}
+```
+
+**❓What will be printed and why?**
+
+**✅ Answer:**  
+```
+A  
+B  
+Result: 2
+```
+
+All methods in the multicast delegate are invoked, but **only the return value of the last method (`B`) is returned**.
+
+---
+
+## Q27: LINQ and Deferred Execution with Delegates
+
+```csharp
+List<int> numbers = new List<int> { 1, 2, 3 };
+var query = numbers.Select(x => x * 2);
+numbers.Add(4);
+
+foreach (var item in query)
+    Console.WriteLine(item);
+```
+
+**❓What will be printed and why is this related to delegates?**
+
+**✅ Answer:**  
+```
+2  
+4  
+6  
+8
+```
+
+LINQ uses **deferred execution** powered by delegates (`Func<T, TResult>`). The delegate captures the logic, and the query is evaluated **only when enumerated**.
+
+---
+
+## Q28: Closure and Delegate Capture
+
+```csharp
+var actions = new List<Action>();
+for (int i = 0; i < 3; i++)
+{
+    actions.Add(() => Console.WriteLine(i));
+}
+foreach (var action in actions)
+    action();
+```
+
+**❓What will be printed and why?**
+
+**✅ Answer:**  
+```
+3  
+3  
+3
+```
+
+The delegate **captures the variable `i`**, not its value at the time of creation. After the loop, `i == 3`, so all actions print `3`.
+
+---
+
+## Q29: Async/Await with Event Handler
+
+```csharp
+public static async Task AsyncMethod()
+{
+    Console.WriteLine("Inside Method");
+    await Task.Delay(500);
+    Console.WriteLine("After Await");
+}
+
+public static async Task Main()
+{
+    Console.WriteLine("Start");
+    var task = AsyncMethod();
+    Console.WriteLine("Middle");
+    await task;
+    Console.WriteLine("End");
+}
+```
+
+**❓What is the order of execution and why?**
+
+**✅ Answer:**  
+```
+Start  
+Middle  
+Inside Method  
+After Await  
+End
+```
+
+`AsyncMethod()` starts, but `await` inside it yields control. `Main` continues execution after calling the method, then resumes after the `await`.
+
+---
+
+## Q30: Null-Conditional Invocation of Events
+
+```csharp
+public event EventHandler Click;
+
+public void Raise()
+{
+    Click?.Invoke(this, EventArgs.Empty);
+    Console.WriteLine("Event invoked");
+}
+```
+
+**❓What happens if no handlers are subscribed and `Raise()` is called?**
+
+**✅ Answer:**  
+Nothing breaks. Output:
+```
+Event invoked
+```
+
+The null-conditional operator (`?.`) ensures `Click.Invoke` is only called if it's not null. If there are no subscribers, it safely skips invocation.
+
