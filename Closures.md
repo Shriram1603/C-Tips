@@ -17,7 +17,7 @@ Closures allow lambdas and anonymous functions to "remember" the environment in 
 List<Action> actions = new();
 for (int i = 0; i < 3; i++)
 {
-    actions.Add(() => Console.WriteLine(i)); // Closure!
+    actions.Add(() => Console.WriteLine(i)); // Closure! output = 3 3 3
 }
 ```
 
