@@ -310,3 +310,156 @@ When setting the age of a person in a database, `0` would be incorrect. `null` i
 False. `Nullable<T>` is a struct that makes other structs nullable — it is a value type stored on the stack.
 
 ---
+
+
+## Q21: `Span<T>` and Memory Performance
+
+```csharp
+public static void Main()
+{
+    int[] data = { 1, 2, 3, 4, 5 };
+    Span<int> span = data;
+    span[0] = 42;
+    Console.WriteLine(data[0]);
+}
+```
+
+**❓What will be the output? What advantage does `Span<T>` offer here?**
+
+**✅ Answer:**  
+Output: `42`  
+`Span<T>` provides a memory-safe, efficient view over contiguous memory (like arrays, stackalloc, etc.). It's allocated on the stack and **avoids heap allocations**, making it ideal for performance-critical scenarios like parsing or slicing arrays.
+
+---
+
+## Q22: `ref`, `in`, and `out` Parameter Behavior
+
+```csharp
+public static void Modify(ref int x, in int y, out int z)
+{
+    x = x + 10;
+    // y = y + 1; // ❌ Compile error: Cannot assign to 'in' parameter
+    z = x + y;
+}
+
+public static void Main()
+{
+    int a = 5, b = 3, c;
+    Modify(ref a, in b, out c);
+    Console.WriteLine($"{a}, {b}, {c}");
+}
+```
+
+**❓What will be the output and why does `in` give a compile error?**
+
+**✅ Answer:**  
+Output: `15, 3, 18`  
+- `ref` allows both read/write.
+- `in` allows only **readonly by reference**.
+- `out` must be assigned inside the method.
+
+---
+
+## Q23: `yield return` Execution Trap
+
+```csharp
+public static IEnumerable<int> Generate()
+{
+    Console.WriteLine("Before yield");
+    yield return 1;
+    Console.WriteLine("After yield");
+}
+
+public static void Main()
+{
+    var gen = Generate();
+    Console.WriteLine("Main Start");
+    foreach (var i in gen)
+    {
+        Console.WriteLine(i);
+    }
+}
+```
+
+**❓What will be printed and why is `yield return` deferred?**
+
+**✅ Answer:**  
+Output:
+```
+Main Start  
+Before yield  
+1  
+After yield
+```
+
+`yield return` is part of an iterator. The function **pauses** after `yield return` and **resumes** on next iteration. Execution is deferred until enumeration.
+
+---
+
+## Q24: Custom `IEnumerable` Implementation
+
+```csharp
+public class MyRange : IEnumerable<int>
+{
+    int start, count;
+    public MyRange(int start, int count) { this.start = start; this.count = count; }
+
+    public IEnumerator<int> GetEnumerator()
+    {
+        for (int i = 0; i < count; i++)
+            yield return start + i;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
+public static void Main()
+{
+    foreach (int i in new MyRange(10, 3))
+        Console.WriteLine(i);
+}
+```
+
+**❓What will be the output? Why is `IEnumerable` useful here?**
+
+**✅ Answer:**  
+Output:
+```
+10  
+11  
+12
+```
+
+Custom `IEnumerable` enables user-defined sequences to be iterated using `foreach`. It leverages `yield return` internally to simplify state management.
+
+---
+
+## Q25: `readonly struct` and `ref struct` Pitfalls
+
+```csharp
+readonly struct ReadOnlyPoint
+{
+    public int X { get; }
+    public ReadOnlyPoint(int x) => X = x;
+}
+
+ref struct StackOnly
+{
+    public int X;
+}
+
+public static void Main()
+{
+    ReadOnlyPoint p = new ReadOnlyPoint(5);
+    // Console.WriteLine(p.X = 10); // ❌ Error: Property has no setter
+
+    Span<int> span = stackalloc int[5];
+    StackOnly s; // ✅ OK: lives on stack
+}
+```
+
+**❓Why are `readonly struct` and `ref struct` restricted like this?**
+
+**✅ Answer:**  
+- `readonly struct` prevents mutation and ensures immutability, especially important for performance and predictable behavior.
+- `ref struct` can **only live on the stack** and cannot be boxed or captured by lambdas. This ensures **safety and performance** for stack-only scenarios like `Span<T>`.
