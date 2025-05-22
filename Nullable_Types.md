@@ -38,6 +38,7 @@ string s; // default is null
 ## 📦 2. How `Nullable<T>` Works
 
 ### Definition (simplified):
+
 ```csharp
 public struct Nullable<T> where T : struct
 {
