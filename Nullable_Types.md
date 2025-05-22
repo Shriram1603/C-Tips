@@ -147,7 +147,8 @@ Console.WriteLine(x.GetValueOrDefault()); // 0
 ### Nullable in Expressions
 ```csharp
 int? a = 10, b = null;
-var result = a + b; // null (null propagates)
+Console.WriteLine(a > b); // false: null is unknown, so comparison cannot be done
+var result = a + b; // null: any artithmetic operation on null is null
 ```
 
 ---
