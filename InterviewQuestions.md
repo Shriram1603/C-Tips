@@ -602,3 +602,107 @@ Event invoked
 
 The null-conditional operator (`?.`) ensures `Click.Invoke` is only called if it's not null. If there are no subscribers, it safely skips invocation.
 
+
+## Q31: Delegate Combination
+
+```csharp
+int counter = 0;
+
+Action a = () => counter++;
+Action b = () => counter++;
+Action c = a + b + a;
+c();
+Console.WriteLine(counter);
+
+```
+
+**✅ Answer:**  
+`Output`: `3`
+
+
+📌 Explanation:
+When you combine delegates with +, you're building a multicast delegate.
+
+- c = a + b + a means:
+    - Run a → counter++ (1)
+
+    - Run b → counter++ (2)
+
+    - Run a again → counter++ (3)
+
+✅ It's not about closure here — it's just that c() executes 3 actions in order.
+
+## Q32: Boxing a struct that implements an interface
+
+```csharp
+interface ILogger
+{
+    void Log();
+}
+
+struct MyLogger : ILogger
+{
+    public void Log() => Console.WriteLine("Logging...");
+}
+```
+
+**✅ Answer:**  
+`Output`: `Logging...`
+
+
+📌 Explanation:
+- When you combine delegates with +, you're building a multicast delegate.
+
+- When assigning a struct to an interface (ILogger logger = new MyLogger();), boxing does occur — a copy is stored on the heap.
+
+- But that copy still retains the method implementation — so Log() will print "Logging...".
+✅ So there is boxing, but you still get output.
+
+
+## Q33: Object Comparison
+
+```csharp
+object a = 5;
+object b = 5;
+
+Console.WriteLine(a == b);        // false
+Console.WriteLine(a.Equals(b));   // true
+
+```
+
+**✅ Answer:**  
+`Output`: `false , true`
+
+
+📌 Explanation:
+- a == b: Reference comparison → false (both boxed separately).
+
+- a.Equals(b): Value comparison via int.Equals(int) → true.
+
+## Q34: Difference between ref readonly and readonly ref
+
+
+
+**✅ Answer:**  
+
+
+These are actually the same thing — just different syntactic orders. Both declare a read-only reference to a value.
+
+```csharp
+ref readonly int GetRefReadonly() => ref someArray[0];
+```
+
+📌 Explanation:
+This means:
+
+You're returning a reference (ref) to an int
+
+That reference is read-only — you cannot write to it
+
+🔹 Why it's used:
+To return large structs by reference (to avoid copying), but still prevent modification.
+
+✅ So:
+
+ref readonly = readonly ref = reference that can't be written to.
+
