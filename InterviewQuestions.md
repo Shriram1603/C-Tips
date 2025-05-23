@@ -706,3 +706,75 @@ To return large structs by reference (to avoid copying), but still prevent modif
 
 ref readonly = readonly ref = reference that can't be written to.
 
+## Q35: `||` operator
+
+
+```csharp
+public class Button
+{
+    public bool IsClicked()
+    {
+        Console.WriteLine("Click 1");
+        return true;
+    }
+
+    public bool IsClicked2()
+    {
+        Console.WriteLine("Click 2");
+        
+        return false;
+    }
+}
+
+Button ash = new Button();
+if (ash.IsClicked() || ash.IsClicked2())
+{
+    Console.WriteLine("If block");
+}
+```
+
+**✅ Answer:**  
+Click1
+If block
+
+📌 Explanation:
+`||` doesn't need both operand values to decide the outcome unless the first operand is false,
+If first operand itself return true then the condition is true and the second operand is ignored.
+
+
+## Q36: `|` operator
+
+
+```csharp
+public class Button
+{
+    public bool IsClicked()
+    {
+        Console.WriteLine("Click 1");
+        return true;
+    }
+
+    public bool IsClicked2()
+    {
+        Console.WriteLine("Click 2");
+        
+        return false;
+    }
+}
+
+Button ash = new Button();
+if (ash.IsClicked() | ash.IsClicked2())
+{
+    Console.WriteLine("If block");
+}
+```
+
+**✅ Answer:**  
+Click1
+Click2
+If block
+
+📌 Explanation:
+`|` is a bitwise operator and needs both operand values to decide the outcome,
+thus both conditions or value must be evaluvated.
+
