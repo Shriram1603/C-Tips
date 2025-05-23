@@ -48,3 +48,56 @@ So C# and .NET designers opted to **throw an exception** instead — it's a clea
 ```csharp
 if (Math.Abs(a - b) < 0.0001f) { /* Equal */ }
 ```
+----
+
+# 🧠 Why float can't be compared directly with double
+
+When you compare a float with a double in C#, you’re comparing two values with different precisions (levels of accuracy). Here's why this matters:
+
+## ✅ 1. Different Sizes
+
+| Type     | Size    | Approx. Precision      | Range                           |
+| -------- | ------- | ---------------------- | ------------------------------- |
+| `float`  | 32 bits | \~6–7 decimal digits   | ±1.5 × 10^−45 to ±3.4 × 10^38   |
+| `double` | 64 bits | \~15–17 decimal digits | ±5.0 × 10^−324 to ±1.7 × 10^308 |
+
+A float cannot represent values as precisely as a double. When a float is implicitly or explicitly cast to a double, the value gets promoted — but the precision doesn't magically improve. The imprecision that existed in the original float is still there
+
+## Example
+
+```csharp
+float f = 0.1f;
+double d = 0.1;
+
+Console.WriteLine(f == d); // False
+```
+
+Why is this false?
+- f is 0.10000000149011612 (what float can represent).
+
+- d is 0.1 exactly in double.
+
+- Even though they look the same when printed, the actual bits are different. So, f == d is false.
+
+⚠️ When comparing float and double:
+- Avoid direct equality.
+
+- Use an epsilon-based comparison:
+
+```csharp
+float f = 0.1f;
+double d = 0.1;
+
+bool areEqual = Math.Abs(f - d) < 1e-6; // tolerance
+```
+💡 TL;DR
+
+- float has less precision than double.
+
+- Comparing float with double leads to false negatives because of binary rounding differences.
+
+- Always use a tolerance-based comparison if you must compare them.
+
+
+
+
