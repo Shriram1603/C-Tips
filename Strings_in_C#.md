@@ -11,7 +11,7 @@
   - Allows optimization like memory sharing.
 
 
-[Internal implementation of a string](https://source.dot.net/#q=string)
+[Internal implementation of a string](https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/String.cs,8281103e6f23cb5c)
 
 
 
@@ -73,6 +73,8 @@ Console.WriteLine(sb.ToString()); // "qello"
   - Logging systems
   - Building dynamic queries
   - Text file generation
+ 
+[Internal implementation of a stringBuilder](https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/Text/StringBuilder.cs,adf60ee46ebd299f)
 
 ## 🚫 Misconception: String Has a Small OS-Imposed Limit?
 
