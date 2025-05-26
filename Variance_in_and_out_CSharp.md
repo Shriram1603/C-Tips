@@ -50,7 +50,7 @@ Even **generic delegates** implicitly use covariance and contravariance when the
 ---
 
 ## ❓ Why Use `in` and `out`?
-
+`in/out` let's you convert between different instantiations of a generic delegate type (See Real-World Use Case 1).
 While implicit conversion may work, `in` and `out` **formally declare variance**, which allows:
 
 - Safe type conversion.
@@ -62,6 +62,8 @@ While implicit conversion may work, `in` and `out` **formally declare variance**
 ## 🔁 Real-World Use Cases
 
 ### 1. Event Handlers (Contravariant `in`)
+
+
 
 ```csharp
 public delegate void AnimalHandler<in T>(T animal);
