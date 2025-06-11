@@ -17,6 +17,9 @@
 
 ## 🧠 Core Components and Features
 
+![Screenshot 2025-06-11 121329](https://github.com/user-attachments/assets/179ded39-03b9-461d-9cb7-f5c3070c7c5d)
+
+
 ### ⏲️ Scheduler (Pull Model)
 - Prometheus **pulls** (scrapes) metrics from monitored systems.
 - Metrics are fetched every configurable interval (e.g., 30s, 1m).
