@@ -141,6 +141,9 @@ Manipulate metric labels after target discovery but before storage.
 
 ## ✅ Best Practices
 
+![image](https://github.com/user-attachments/assets/941778f3-2e66-49ca-bbd5-3f3eed9db9c0)
+
+
 - Normalize label values early using `relabel_configs`
 - Use `metric_relabel_configs` to drop noisy/unneeded metrics
 - Ensure label consistency across platforms (e.g., Windows vs Linux)
