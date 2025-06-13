@@ -7,21 +7,26 @@ I want to learn about Observabilities:
 
 I will give you my understanding, correct me if I am wrong, and give a detailed explanation.
 
-first there are 3 types of observability and we use certain binary to deal with them
+First, there are 3 types of observability, and we use certain binaries to deal with them
 
-1) Log - Loki and serilog
+1) Log - Loki and Serilog
 
-here we log all the things that are going on in our client or server when we get a error we can see that in the log, but when we have multiple microservices logging each will make the log un ordered and hard to trace back, to solve this we introduced Traces
+Here we log all the things that are going on in our client or server when we get an error
+We can see that in the log, but when we have multiple microservices login,g each will make the
+log un-ordered and hard to trace back, to solve this, we introduced Traces
 
 2) Traces - Jagger
 
-Traces add a unique ID to the logs , so now we can select a error log and use its id to trace the path but both these don't store the data , we want a real time SQL DB to store and draw insights from it , thus comes Prometheus.
+Traces add a unique ID to the logs, so now we can select an error log and use its ID to
+trace the path, but neither of these store the data; we want a real-time SQL DB to store
+and draw insights from it, thus comes Prometheus.
 
 3) Metrics - Prometheus :
 
-the logs will have a time stamp if we find an error log we can get its time stamp and then query it in promQL to get the state of the machine at that time and find out what the issue is.
-
-and Lastly we can integrate all these in Grafana to draw conclusions from them.
+The logs will have a time stamp. If we find an error log, we can get its timestamp and
+Then query it in promQL to get the state of the machine at that time and
+Find out what the issue is, and lastly, we can integrate all these in Grafana
+to draw insights from them.
 ```
 
 ---
