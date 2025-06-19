@@ -210,3 +210,56 @@ Advantages:
 *End of Module 1 – Fundamentals of Dates and Times in .NET*
 
 
+# Hands-on Practice (go through to see DST in Action)
+
+```csharp
+namespace DateTime_Hands_on
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            // DateTimeOffset will show your local offset. DateTime won’t.
+            Console.WriteLine("DateTime.Now:           " + DateTime.Now);
+            Console.WriteLine("DateTimeOffset.Now:     " + DateTimeOffset.Now);
+            Console.WriteLine("DateTime.UtcNow:        " + DateTime.UtcNow);
+            Console.WriteLine("DateTimeOffset.UtcNow:  " + DateTimeOffset.UtcNow);
+
+            // Parsing offset
+            var isoString = "2023-10-01T12:00:00+05:30";
+            var parsed = DateTimeOffset.Parse(isoString);
+            Console.WriteLine("Parsed : " + parsed);
+            Console.WriteLine("ISO 8601: " + parsed.ToString("O"));
+
+
+            // Converting between Time Zones
+            var utcNow = DateTimeOffset.UtcNow;
+            var londonTimeZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+            var londonTime = TimeZoneInfo.ConvertTime(utcNow, londonTimeZone);
+            Console.WriteLine("Current UTC Time: " + utcNow);
+            Console.WriteLine("London Time: " + londonTime);
+
+            // DST in Action
+
+            var dstDate = new DateTimeOffset(2025, 7, 1, 12, 0, 0, TimeSpan.Zero); // Summer
+            var standardDate = new DateTimeOffset(2025, 12, 1, 12, 0, 0, TimeSpan.Zero); // Winter
+
+            var london = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+
+            Console.WriteLine($"Offset on July 1:  {london.GetUtcOffset(dstDate)}");       // +01:00
+            Console.WriteLine($"Offset on Dec 1:   {london.GetUtcOffset(standardDate)}"); // +00:00
+
+            var india = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+
+            Console.WriteLine($"Offset on July 1 in India:  {india.GetUtcOffset(dstDate)}");       // +05:30
+            var currentIndianTime = TimeZoneInfo.ConvertTime(utcNow, india);
+            var currentLondonTime = TimeZoneInfo.ConvertTime(utcNow, london);
+            Console.WriteLine($"Current Indian Time: {currentIndianTime}");
+            Console.WriteLine($"Current London Time: {currentLondonTime}");
+
+
+        }
+    }
+}
+
+```
