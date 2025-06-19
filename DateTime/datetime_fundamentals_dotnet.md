@@ -15,7 +15,7 @@
 10. [TimeProvider in .NET 8](#timeprovider-in-net-8)
 11. [NodaTime - Alternative Library](#nodatime---alternative-library)
 12. [Best Practices Summary](#best-practices-summary)
-13. [Hands-on](#Hands-on-Practice-go-through-to-see-DST-in-Action))
+13. [Hands-on](#Hands-on-Practice-go-through-to-see-DST-in-Action)
 
 ---
 
