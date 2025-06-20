@@ -101,6 +101,8 @@ Console.WriteLine(dubaiTrip.UtcDateTime); // 2025-06-20 16:00:00Z
 - Store in UTC.
 - Let frontend (e.g., Angular) read the user's local time zone and adjust time accordingly.
 
+![image](https://github.com/user-attachments/assets/c2a91c12-8fe1-4283-9e00-1092bb11c55e)
+
 ✅ This works well in **most modern apps**.
 
 ### 🧐 So Why Use DateTimeOffset?
