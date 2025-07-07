@@ -169,10 +169,32 @@ Design a smart home system with devices like `Thermostat`, `Alarm`, `DoorSensor`
 ### ✅ Code
 
 ```csharp
+public class Program
+{
+    static void Main()
+    {
+        Alarm alarm = new Alarm("Alarm");
+        Thermostat thermostat = new Thermostat("Thermostat");
+        DoorSensor doorSensor = new DoorSensor("DoorSensor");
+
+        NotificationCenter notificationCenter = new NotificationCenter();
+
+        alarm.AlarmTriggered += notificationCenter.PushNotification;
+        thermostat.Thermometer += notificationCenter.PushNotification;
+        doorSensor.Sensor += notificationCenter.PushNotification;
+
+        SmartDeviceEventArgs Info = new SmartDeviceEventArgs("Temperature Too High", Severity.High);
+
+        thermostat.TriggerSensor(Info);
+    }
+}
+
 public class SmartDeviceEventArgs : EventArgs
 {
     public string Message { get; }
+
     public DateTimeOffset TimeStamp { get; }
+
     public Severity Severity { get; }
 
     public SmartDeviceEventArgs(string message, Severity severity)
@@ -183,8 +205,6 @@ public class SmartDeviceEventArgs : EventArgs
     }
 }
 
-public enum Severity { Low, Medium, High }
-
 public class NotificationCenter
 {
     public void PushNotification(object sender, SmartDeviceEventArgs e)
@@ -193,19 +213,68 @@ public class NotificationCenter
     }
 }
 
+public enum Severity
+{
+    Low,
+    Medium,
+    High
+}
+
+public class DoorSensor
+{
+    public event EventHandler<SmartDeviceEventArgs> Sensor;
+    public string Name { get; }
+
+    public DoorSensor(string name)
+    {
+        Name = name;
+    }
+
+    public void TriggerSensor(SmartDeviceEventArgs e)
+    {
+        Sensor?.Invoke(this, e);
+    }
+
+    public override string ToString() => Name;
+
+}
+
+public class Thermostat
+{
+    public event EventHandler<SmartDeviceEventArgs> Thermometer;
+    public string Name { get; }
+
+    public Thermostat(string name)
+    {
+        Name = name;
+    }
+
+    public void TriggerSensor(SmartDeviceEventArgs e)
+    {
+        Thermometer?.Invoke(this, e);
+    }
+
+    public override string ToString() => Name;
+
+}
+
 public class Alarm
 {
     public event EventHandler<SmartDeviceEventArgs> AlarmTriggered;
     public string Name { get; }
 
-    public Alarm(string name) => Name = name;
+    public Alarm(string name)
+    {
+        Name = name;
+    }
 
-    public void TriggerAlarm(SmartDeviceEventArgs e) => AlarmTriggered?.Invoke(this, e);
+    public void TriggerAlarm(SmartDeviceEventArgs e)
+    {
+        AlarmTriggered?.Invoke(this, e);
+    }
 
     public override string ToString() => Name;
 }
-
-// Similar for Thermostat, DoorSensor...
 ```
 
 ### 🧠 Key Learning
@@ -224,30 +293,105 @@ Every device directly depends on `NotificationCenter`. No subscribers, no flexib
 ### 🧱 Code
 
 ```csharp
-public class Alarm
+namespace RealSmartHomeSystem_NoEvents
 {
-    private readonly NotificationCenter _center;
-    public string Name { get; }
-
-    public Alarm(string name, NotificationCenter center)
+    public class Program
     {
-        Name = name;
-        _center = center;
+        static void Main()
+        {
+            NotificationCenter center = new NotificationCenter();
+
+            Alarm alarm = new Alarm("Alarm", center);
+            Thermostat thermostat = new Thermostat("Thermostat", center);
+            DoorSensor doorSensor = new DoorSensor("DoorSensor", center);
+
+            SmartDeviceEventArgs e = new SmartDeviceEventArgs("Temperature Too High", Severity.High);
+
+            thermostat.TriggerSensor(e);
+        }
     }
 
-    public void TriggerAlarm(SmartDeviceEventArgs e)
+    public class NotificationCenter
     {
-        _center.PushNotification(Name, e);
+        public void PushNotification(string deviceName, SmartDeviceEventArgs e)
+        {
+            Console.WriteLine($"[{e.Severity}] [{e.TimeStamp}] {deviceName}: {e.Message}");
+        }
+    }
+
+    public class Alarm
+    {
+        private readonly NotificationCenter _notificationCenter;
+        public string Name { get; }
+
+        public Alarm(string name, NotificationCenter center)
+        {
+            Name = name;
+            _notificationCenter = center;
+        }
+
+        public void TriggerAlarm(SmartDeviceEventArgs e)
+        {
+            _notificationCenter.PushNotification(Name, e);
+        }
+    }
+
+    public class Thermostat
+    {
+        private readonly NotificationCenter _notificationCenter;
+        public string Name { get; }
+
+        public Thermostat(string name, NotificationCenter center)
+        {
+            Name = name;
+            _notificationCenter = center;
+        }
+
+        public void TriggerSensor(SmartDeviceEventArgs e)
+        {
+            _notificationCenter.PushNotification(Name, e);
+        }
+    }
+
+    public class DoorSensor
+    {
+        private readonly NotificationCenter _notificationCenter;
+        public string Name { get; }
+
+        public DoorSensor(string name, NotificationCenter center)
+        {
+            Name = name;
+            _notificationCenter = center;
+        }
+
+        public void TriggerSensor(SmartDeviceEventArgs e)
+        {
+            _notificationCenter.PushNotification(Name, e);
+        }
+    }
+
+    public class SmartDeviceEventArgs : EventArgs
+    {
+        public string Message { get; }
+        public DateTimeOffset TimeStamp { get; }
+        public Severity Severity { get; }
+
+        public SmartDeviceEventArgs(string message, Severity severity)
+        {
+            Message = message;
+            Severity = severity;
+            TimeStamp = DateTimeOffset.Now;
+        }
+    }
+
+    public enum Severity
+    {
+        Low,
+        Medium,
+        High
     }
 }
 
-public class NotificationCenter
-{
-    public void PushNotification(string deviceName, SmartDeviceEventArgs e)
-    {
-        Console.WriteLine($"[{e.Severity}] [{e.TimeStamp}] {deviceName}: {e.Message}");
-    }
-}
 ```
 
 ### 🔎 Why This Is Worse
